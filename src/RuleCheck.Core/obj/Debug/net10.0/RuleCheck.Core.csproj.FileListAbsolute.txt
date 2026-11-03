@@ -1,0 +1,12 @@
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\bin\Debug\net10.0\RuleCheck.Core.deps.json
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\bin\Debug\net10.0\RuleCheck.Core.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\bin\Debug\net10.0\RuleCheck.Core.pdb
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.AssemblyInfoInputs.cache
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.AssemblyInfo.cs
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.csproj.CoreCompileInputs.cache
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.sourcelink.json
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\refint\RuleCheck.Core.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\RuleCheck.Core.pdb
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Core\obj\Debug\net10.0\ref\RuleCheck.Core.dll

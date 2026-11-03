@@ -1,0 +1,16 @@
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\bin\Debug\net10.0\RuleCheck.Schema.deps.json
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\bin\Debug\net10.0\RuleCheck.Schema.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\bin\Debug\net10.0\RuleCheck.Schema.pdb
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\bin\Debug\net10.0\RuleCheck.Core.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\bin\Debug\net10.0\RuleCheck.Core.pdb
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.csproj.AssemblyReference.cache
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.AssemblyInfoInputs.cache
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.AssemblyInfo.cs
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.csproj.CoreCompileInputs.cache
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.sourcelink.json
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleChec.A2A9B501.Up2Date
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\refint\RuleCheck.Schema.dll
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\RuleCheck.Schema.pdb
+C:\Users\esmail\Desktop\revit ai\src\RuleCheck.Schema\obj\Debug\net10.0\ref\RuleCheck.Schema.dll

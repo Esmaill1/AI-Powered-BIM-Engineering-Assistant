@@ -1,7 +1,7 @@
 # PRD: AI-Assisted Revit Model QA/QC Checker (RuleCheck)
 
 **Working title:** RuleCheck for Revit  
-**Version:** 2.0 (Post Grill-Me Alignment) | **Date:** 23 Oct 2026 | **Target:** Academic Thesis / Capstone  
+**Version:** 2.1 (Retargeted to Revit 2027 / .NET 10) | **Date:** 24 Oct 2026 | **Target:** Academic Thesis / Capstone  
 **Team:** 4 Students (Roles A, B, C, D) | **Deadline:** Early Feb 2027 (Feature Freeze: 10 Jan 2027)
 
 ---
@@ -9,7 +9,7 @@
 ## 1. Executive Summary & Success Statement
 
 ### 1.1 Product Vision
-**RuleCheck** is a Revit 2026 add-in and automated QA/QC pipeline that converts unstructured requirements from BIM Execution Plans (BEP) and Employer's Information Requirements (EIR)—supplied as pasted text sections or spreadsheet tables—into structured, executable, deterministic validation rules. It presents these rules in a review screen with source-text traceability, runs validated rules against an extracted model snapshot, and outputs clickable issues that highlight and zoom to offending elements directly in Revit. The tool is strictly read-only and never modifies the BIM model.
+**RuleCheck** is a Revit 2027 add-in and automated QA/QC pipeline that converts unstructured requirements from BIM Execution Plans (BEP) and Employer's Information Requirements (EIR)—supplied as pasted text sections or spreadsheet tables—into structured, executable, deterministic validation rules. It presents these rules in a review screen with source-text traceability, runs validated rules against an extracted model snapshot, and outputs clickable issues that highlight and zoom to offending elements directly in Revit. The tool is strictly read-only and never modifies the BIM model.
 
 ### 1.2 Primary Project Goal
 **Academic rigor and defensibility first.** The software is a vehicle for empirical research and formal evaluation. Business and commercialization chapters serve as secondary desk research to demonstrate market relevance rather than a venture launch.
@@ -17,7 +17,7 @@
 ### 1.3 Success Criteria
 By February 2027, the team demonstrates:
 1. **Rule Translation Quality:** The two-stage LLM pipeline achieves measurable schema-validity, expressibility coverage, and behavioral accuracy across ~100 standardized BEP requirements extracted from 3–5 public BIM standards (evaluated on a frozen, held-out 70-requirement test set, run 3× to report variance).
-2. **Detection Precision & Recall:** End-to-end issue detection achieves high precision, recall, and F1 on Revit 2026 benchmark models (Autodesk sample models) evaluated against gold-standard rule sets on models with conformed shared parameters and systematically injected errors.
+2. **Detection Precision & Recall:** End-to-end issue detection achieves high precision, recall, and F1 on Revit 2027 benchmark models (Autodesk sample models bundled with Revit 2027) evaluated against gold-standard rule sets on models with conformed shared parameters and systematically injected errors.
 3. **Reproducibility & Modularity:** A headless snapshot architecture enables 100% reproducible command-line evaluation and unit testing with zero dependency on an active Revit UI session.
 4. **Methodological Validity:** Gold rules are labeled independently by two annotators with reported inter-annotator agreement (Cohen's $\kappa$), anchored by an external BIM domain expert (academic lecturer or professional alumnus) for spot-checking and final review.
 
@@ -42,7 +42,7 @@ Instead of claiming minor speed gains over template-filling (where existing conf
 |---|---|---|
 | **Solibri** | Enterprise rule-based checking with predefined templates & roles. | Operates externally on IFC files; closed ecosystem; expensive licensing (£5k+); rules require manual template parameterization. |
 | **Autodesk Model Checker for Revit** | Native add-in running XML-configured checksets; XML Configurator UI. | Free and native, but authoring checksets is purely manual; cannot parse BEP text or import ad-hoc project spreadsheets directly into rules. |
-| **RuleCheck (Our System)** | Grounded LLM parser (BEP/Excel $\to$ JSON Schema) + Headless deterministic .NET 8 Engine + Thin Revit 2026 UI. | Direct document ingestion, grounded parameter resolution, transparent user review with source quotes, fully open and auditable academic pipeline. |
+| **RuleCheck (Our System)** | Grounded LLM parser (BEP/Excel $\to$ JSON Schema) + Headless deterministic .NET 10 Engine + Thin Revit 2027 UI. | Direct document ingestion, grounded parameter resolution, transparent user review with source quotes, fully open and auditable academic pipeline. |
 
 ---
 
@@ -68,10 +68,10 @@ Instead of claiming minor speed gains over template-filling (where existing conf
 
 | ID | Module | Requirements & Acceptance Criteria |
 |---|---|---|
-| **F1** | **Revit Add-in Shell** | Revit 2026 ribbon tab, dockable WPF pane scaffolded via `Nice3point.Revit.Templates`. Modeless actions route safely through an `ExternalEvent` queue. |
+| **F1** | **Revit Add-in Shell** | Revit 2027 ribbon tab, dockable WPF pane built on `Nice3point.Revit.Toolkit` / `Nice3point.Revit.Api.*` 2027 packages. Modeless actions route safely through an `ExternalEvent` queue. |
 | **F2** | **Snapshot Extractor** | Fast, read-only extraction of model elements, categories, instance/type parameters, storage types, levels, and rooms into an in-memory/JSON snapshot. |
 | **F3** | **Vocabulary Grounding** | Compiles model categories and parameter names (no parameter values) into typed enums to constrain LLM generation and detect missing/unresolved parameters. |
-| **F4** | **Rule Engine (.NET 8)** | Headless, deterministic check engine supporting 6 core check types with optional AND-based target filters. Zero Revit API references. |
+| **F4** | **Rule Engine (.NET 10)** | Headless, deterministic check engine supporting 7 core check types (`required_parameter`, `pattern`, `allowed_values`, `range`, `unique`, `placement`, `not_unused`) with optional AND-based target filters. Zero Revit API references. |
 | **F5** | **Rule Schema** | Strict JSON Schema enforcing rule types, target categories, where-conditions, and severities, with support for `not_expressible` outcomes. |
 | **F6** | **LLM Ingestion Pipeline** | 2-stage processing: (1) segment text into atomic requirements with verbatim quotes; (2) translate into structured rule schema constrained by model vocabulary. |
 | **F7** | **Interactive Review Screen** | WPF review grid pairing source quotes with parsed rule drafts, status badges (`OK`, `Unresolved`, `Not Expressible`), and inline editing. |
@@ -83,7 +83,7 @@ Instead of claiming minor speed gains over template-filling (where existing conf
 ### 5.2 Out of Scope
 - Automatic model editing or geometry healing.
 - Clash detection or geometric collision analysis.
-- Multi-version Revit support (pinned strictly to Revit 2026).
+- Multi-version Revit support (pinned strictly to Revit 2027).
 - Direct PDF/Word parsing (text is copied/pasted).
 - HTML report generation and historical trend dashboards.
 - Formal building code compliance certification.
@@ -96,7 +96,7 @@ Instead of claiming minor speed gains over template-filling (where existing conf
 To ensure team agility and headless academic evaluation, the codebase is strictly partitioned:
 
 ```
-[Revit 2026 Process]
+[Revit 2027 Process]
   │
   ├── RuleCheck.RevitApp (WPF Dockable Pane, Ribbon, ExternalEvent Queue)
   │     │
@@ -105,7 +105,7 @@ To ensure team agility and headless academic evaluation, the codebase is strictl
   │
 ───────────────────────── Process / Assembly Boundary ─────────────────────────
   │
-[Pure .NET 8 Class Libraries - Zero Revit Dependencies]
+[Pure .NET 10 Class Libraries - Zero Revit Dependencies]
   │
   ├── RuleCheck.Core (Domain entities, ModelSnapshot, Issue models)
   ├── RuleCheck.Engine (Deterministic rule execution & condition evaluators)
@@ -115,13 +115,14 @@ To ensure team agility and headless academic evaluation, the codebase is strictl
 ```
 
 ### 6.2 Target Environment
-- **Revit Version:** Autodesk Revit 2026
-- **Runtime:** .NET 8.0 (`net8.0-windows`)
-- **IDE:** Visual Studio 2022
+- **Revit Version:** Autodesk Revit 2027 (its runtime targets `net10.0`)
+- **Runtime:** .NET 10 — core libraries `net10.0`, Revit add-in `net10.0-windows`
+- **SDK / IDE:** .NET SDK 10.x; Visual Studio 2026 or JetBrains Rider (VS 2022 cannot build .NET 10)
 - **UI Framework:** WPF with `CommunityToolkit.Mvvm`
+- **LLM Provider:** Google Gemini (hosted), behind `ILlmClient`; pinned dated model version; all prompts/responses logged
 
 ### 6.3 Rule Schema Specification
-Rules are structured around a target selector, optional pre-filters, and exactly one deterministic check:
+Rules are structured around a target selector, optional pre-filters, and exactly one deterministic check. The canonical, versioned schema lives in [`schemas/rule.schema.json`](schemas/rule.schema.json) (v1) and is the single source of truth; the excerpt below is the original v0 draft kept for reference only.
 
 ```json
 {
@@ -214,7 +215,7 @@ Rules are structured around a target selector, optional pre-filters, and exactly
 - **Expert Anchor:** A university BIM lecturer or industry alumnus validates a 20-rule sample in mid-December and reviews the final evaluation outputs in January.
 
 ### 8.2 Test Models & Conformance
-- **Benchmark Models:** Official Autodesk Revit 2026 Sample Projects (Architecture, Structure, MEP).
+- **Benchmark Models:** Official Autodesk sample projects bundled with Revit 2027 (`C:\ProgramData\Autodesk\RVT 2027\Samples`): Snowdon Towers (Architectural, Structural, HVAC, Electrical, Plumbing, Site), Golden Nugget (Architecture + MEP), Pacific Continental Residence.
 - **Two-Stage DevTools:**
   1. *Conformance Stage:* Injects required shared parameters and sets valid default values so the baseline model passes 100% of gold rules.
   2. *Error Injection Stage:* Introduces discrete, logged corruptions (e.g., cleared values, malformed naming codes, duplicate tags, detached rooms).
@@ -269,7 +270,7 @@ gantt
     title RuleCheck Project Schedule (Oct 2026 - Feb 2027)
     dateFormat  YYYY-MM-DD
     section Setup & Ingestion
-    Revit 2026 Environment & Shell       :done, a1, 2026-10-23, 2026-11-06
+    Revit 2027 Environment & Shell       :active, a1, 2026-10-23, 2026-11-06
     Corpus Curation (100 Requirements)   :active, a2, 2026-10-28, 2026-11-15
     section Core Development
     Snapshot Extractor & Engine Core     :b1, 2026-11-07, 2026-11-27
@@ -300,15 +301,15 @@ gantt
 | **Model Vocabulary Enum Overflow** | Medium | Medium | Pre-filter vocabulary strictly by category prior to prompt generation, keeping schema tokens within LLM context boundaries. |
 | **LLM Output Non-Determinism** | Medium | High | Fix temperature to 0; enforce JSON Schema strict mode; run the held-out test set 3 times and report mean and spread. |
 | **Schedule Slip on Ground Truth** | High | Medium | Decouple test set annotation early; utilize Dev set (30 items) for preliminary pipeline verification. |
-| **Model Version Incompatibilities** | High | Low | Lock all machines strictly to Revit 2026; do not open test files in subsequent releases. |
+| **Model Version Incompatibilities** | High | Low | Lock all machines strictly to Revit 2027 (models saved in 2027 cannot be opened in 2026); do not open test files in subsequent releases. |
 
 ---
 
 ## 12. Definition of Done (DoD)
 
-- [ ] Add-in loads without warning in Revit 2026 via clean installer or setup script.
+- [ ] Add-in loads without warning in Revit 2027 via clean installer or setup script.
 - [ ] Model snapshot extracts accurately for architectural, structural, and MEP categories.
-- [ ] Rule engine passes 100% of headless unit tests across all 6 check types and filter predicates.
+- [ ] Rule engine passes 100% of headless unit tests across all 7 check types and filter predicates.
 - [ ] Two-stage LLM pipeline produces strictly valid JSON schema output with grounded model vocabulary.
 - [ ] Review UI allows editing, approving, and manual creation of rules.
 - [ ] Issue viewer correctly triggers `ShowElements` on clicked issues in an active Revit view.

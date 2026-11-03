@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "4FGTQUh4NuM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\esmail\\Desktop\\revit ai\\src\\RuleCheck.Schema\\RuleCheck.Schema.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\esmail\\.nuget\\packages\\humanizer.core\\3.0.10\\humanizer.core.3.0.10.nupkg.sha512",
+    "C:\\Users\\esmail\\.nuget\\packages\\json.more.net\\3.0.1\\json.more.net.3.0.1.nupkg.sha512",
+    "C:\\Users\\esmail\\.nuget\\packages\\jsonpointer.net\\7.0.3\\jsonpointer.net.7.0.3.nupkg.sha512",
+    "C:\\Users\\esmail\\.nuget\\packages\\jsonschema.net\\9.4.1\\jsonschema.net.9.4.1.nupkg.sha512"
+  ],
+  "logs": []
+}
