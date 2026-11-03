@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>RuleCheck for Revit 2027</Name>
+    <Assembly>C:\Users\esmail\Desktop\revit ai\src\RuleCheck.RevitApp\bin\Debug\net10.0-windows\RuleCheck.RevitApp.dll</Assembly>
+    <FullClassName>RuleCheck.RevitApp.App</FullClassName>
+    <ClientId>B7C590A2-9E42-4D3B-BA61-739B97F3E101</ClientId>
+    <VendorId>RULECHECK</VendorId>
+    <VendorDescription>RuleCheck AI-Assisted BIM QA/QC Checker</VendorDescription>
+  </AddIn>
+</RevitAddIns>

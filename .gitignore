@@ -1,0 +1,41 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# IDE / Editor files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.sln.docstates
+*.csproj.user
+
+# NuGet
+packages/
+*.nupkg
+
+# Rider
+.idea/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Demo (local prototyping only - not part of the deliverable)
+demo/
+
+# Revit add-in build output deployed to ProgramData
+*.addin.local
+
+# WebView2 cache (runtime browser data)
+EBWebView/
+
+# Agents / AI workspace
+.agents/

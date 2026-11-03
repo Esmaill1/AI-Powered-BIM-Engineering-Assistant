@@ -68,15 +68,15 @@ Instead of claiming minor speed gains over template-filling (where existing conf
 
 | ID | Module | Requirements & Acceptance Criteria |
 |---|---|---|
-| **F1** | **Revit Add-in Shell** | Revit 2027 ribbon tab, dockable WPF pane built on `Nice3point.Revit.Toolkit` / `Nice3point.Revit.Api.*` 2027 packages. Modeless actions route safely through an `ExternalEvent` queue. |
+| **F1** | **Revit Add-in Shell** | Revit 2027 ribbon tab, dockable pane hosting Microsoft WebView2 (Chromium) built on `Nice3point.Revit.Toolkit` / `Nice3point.Revit.Api.*` 2027 packages. Modeless web actions route safely to Revit's main thread through an `ExternalEvent` queue. |
 | **F2** | **Snapshot Extractor** | Fast, read-only extraction of model elements, categories, instance/type parameters, storage types, levels, and rooms into an in-memory/JSON snapshot. |
 | **F3** | **Vocabulary Grounding** | Compiles model categories and parameter names (no parameter values) into typed enums to constrain LLM generation and detect missing/unresolved parameters. |
 | **F4** | **Rule Engine (.NET 10)** | Headless, deterministic check engine supporting 7 core check types (`required_parameter`, `pattern`, `allowed_values`, `range`, `unique`, `placement`, `not_unused`) with optional AND-based target filters. Zero Revit API references. |
 | **F5** | **Rule Schema** | Strict JSON Schema enforcing rule types, target categories, where-conditions, and severities, with support for `not_expressible` outcomes. |
 | **F6** | **LLM Ingestion Pipeline** | 2-stage processing: (1) segment text into atomic requirements with verbatim quotes; (2) translate into structured rule schema constrained by model vocabulary. |
-| **F7** | **Interactive Review Screen** | WPF review grid pairing source quotes with parsed rule drafts, status badges (`OK`, `Unresolved`, `Not Expressible`), and inline editing. |
+| **F7** | **Interactive Review Screen** | WebView2-based review grid pairing source quotes with parsed rule drafts, status badges (`OK`, `Unresolved`, `Not Expressible`), and inline editing. |
 | **F8** | **Manual Rule Editor** | Form-based rule authoring/editing allowing full manual control and offline operation without LLM access. |
-| **F9** | **Issue Grid & Navigation** | Sortable/filterable issue viewer showing severity, element ID, category, level, rule violated, and error message. Triggers `ShowElements` on selection. |
+| **F9** | **Issue Grid & Navigation** | Sortable/filterable issue viewer in WebView2 showing severity, element ID, category, level, rule violated, and error message. Triggers `ShowElements` on selection via bidirectional `postMessage` bridge. |
 | **F10** | **Import / Export** | Ingestion of Excel/CSV tables and plain text; export of issue logs to CSV; export of model snapshots to JSON; save/load of rule sets with vocabulary re-validation. |
 | **F11** | **DevTools (Internal Only)** | Standalone internal add-in to conform test models (inject missing shared parameters) and systematically inject logged errors for evaluation. |
 
@@ -98,10 +98,11 @@ To ensure team agility and headless academic evaluation, the codebase is strictl
 ```
 [Revit 2027 Process]
   │
-  ├── RuleCheck.RevitApp (WPF Dockable Pane, Ribbon, ExternalEvent Queue)
+  ├── RuleCheck.RevitApp (Dockable Pane hosting Microsoft WebView2 Chromium frontend, Ribbon, ExternalEvent Queue)
   │     │
+  │     ├── Web Frontend (HTML5/CSS3/JavaScript in WebView2, bidirectional postMessage bridge)
   │     ├── SnapshotExtractor ──► ModelSnapshot (Memory / JSON file)
-  │     └── ElementNavigator   ◄── Issue Element IDs (ShowElements)
+  │     └── ElementNavigator   ◄── Issue Element IDs (ShowElements via ExternalEvent)
   │
 ───────────────────────── Process / Assembly Boundary ─────────────────────────
   │
@@ -114,11 +115,17 @@ To ensure team agility and headless academic evaluation, the codebase is strictl
   └── RuleCheck.Evaluation (CLI test harness, metric calculators, synthetic runner)
 ```
 
+#### 6.1.1 Architectural Decision: Embedded WebView2 Frontend
+The add-in UI uses **Microsoft WebView2** (Chromium) embedded within Revit's native dockable panel:
+1. **Rapid Iteration & Live Hot-Reload:** Web assets (`Web/panel.html`) can be developed and styled with instant reload (`window.location.reload()`) without closing or restarting the 10GB Revit host process.
+2. **Process Isolation & Crash Immunity:** Chromium operates in an isolated rendering process. UI-level scripting issues cannot crash or corrupt the host Revit design session.
+3. **Seamless 3D Model Integration:** A lightweight two-way bridge (`window.chrome.webview.postMessage`) translates web clicks into native `UIDocument.ShowElements(elementId)` calls via Revit's thread-safe `ExternalEvent` queue.
+
 ### 6.2 Target Environment
 - **Revit Version:** Autodesk Revit 2027 (its runtime targets `net10.0`)
 - **Runtime:** .NET 10 — core libraries `net10.0`, Revit add-in `net10.0-windows`
-- **SDK / IDE:** .NET SDK 10.x; Visual Studio 2026 or JetBrains Rider (VS 2022 cannot build .NET 10)
-- **UI Framework:** WPF with `CommunityToolkit.Mvvm`
+- **SDK / IDE:** .NET SDK 10.x; Visual Studio 2026 or JetBrains Rider
+- **UI Framework:** Microsoft WebView2 (Chromium) hosted in a thin WPF dockable shell; HTML5/CSS3/JS frontend with live hot-reload and bidirectional C# bridge
 - **LLM Provider:** Google Gemini (hosted), behind `ILlmClient`; pinned dated model version; all prompts/responses logged
 
 ### 6.3 Rule Schema Specification
@@ -255,7 +262,7 @@ Role C: LLM & Data Pipeline (AI Experience)
   └── Automated evaluation harness & metric computation CLI (blind to held-out test set)
 
 Role D: UI, Evaluation Corpus & Research Lead
-  ├── WPF MVVM review screen, issue grid, and manual rule editor
+  ├── WebView2 UI review screen, issue grid, and manual rule editor
   ├── Public BEP corpus curation (~100 items) & dev/test partitioning
   ├── Gold Annotator 1, Cohen's κ calculation, & Domain Expert liaison
   └── Desk research for business chapter & thesis report structure

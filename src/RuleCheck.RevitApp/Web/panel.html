@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RuleCheck WebView2 Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-panel: #16191f;
+      --bg-card: #20242e;
+      --bg-card-hover: #292f3c;
+      --bg-input: #111317;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --cyan: #38bdf8;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --border: #2a2f3c;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --mono: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: var(--bg-panel);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 12px;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: #121418;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left { display: flex; align-items: center; gap: 8px; }
+    .logo-badge {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      font-size: 13px;
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    .title h3 { font-size: 13px; font-weight: 700; color: #fff; }
+    .title p { font-size: 10px; color: var(--text-dim); }
+    .header-btns { display: flex; gap: 4px; }
+    .hdr-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      border-radius: 4px; padding: 3px 6px; font-size: 11px; cursor: pointer;
+    }
+    .hdr-btn:hover { background: var(--border); color: #fff; }
+
+    /* Tabs */
+    .tabs {
+      display: flex; background: #111317; border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1; padding: 8px 4px; background: transparent; border: none;
+      border-bottom: 2px solid transparent; color: var(--text-muted);
+      font-size: 11px; font-weight: 500; cursor: pointer; text-align: center;
+    }
+    .tab:hover { color: #fff; }
+    .tab.active {
+      color: #fff; font-weight: 600; background: var(--bg-panel);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* Content Area */
+    .content { flex: 1; overflow-y: auto; padding: 12px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Forms */
+    .section-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .section-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .chip {
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+      padding: 3px 6px; border-radius: 10px; font-size: 10px; cursor: pointer;
+    }
+    .chip:hover, .chip.active { background: #2e3545; color: #fff; border-color: var(--accent); }
+
+    textarea {
+      width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: 4px; color: #e2e8f0; font-family: var(--mono); font-size: 11px;
+      padding: 8px; resize: vertical; margin-bottom: 10px;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); }
+
+    .info-card {
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 4px; padding: 8px; margin-bottom: 12px; font-size: 11px; color: #bae6fd;
+    }
+
+    .btn {
+      width: 100%; padding: 8px 12px; border-radius: 4px; font-size: 11px; font-weight: 600;
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-success:hover { background: #059669; }
+
+    /* Rules List */
+    .rules-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .rule-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px;
+      padding: 8px 10px; border-left: 3px solid var(--green);
+    }
+    .rule-card.warning-left { border-left-color: var(--amber); }
+    .rule-card.error-left { border-left-color: var(--red); }
+    .rule-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .rule-title { font-weight: 600; color: #fff; font-size: 11px; }
+    .badge {
+      font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px; text-transform: uppercase;
+    }
+    .badge-ok { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .badge-unres { background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
+    .quote-box {
+      background: rgba(0,0,0,0.25); border-left: 2px solid var(--accent);
+      padding: 4px 6px; font-size: 10px; font-style: italic; color: #cbd5e1; margin-bottom: 6px;
+    }
+
+    /* Issues Table */
+    .table-box {
+      border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input);
+      max-height: 380px; overflow-y: auto; margin-bottom: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th {
+      background: #191c24; color: var(--text-muted); padding: 6px 8px; text-align: left;
+      position: sticky; top: 0; border-bottom: 1px solid var(--border);
+    }
+    td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    tr.issue-row { cursor: pointer; transition: background 0.1s; }
+    tr.issue-row:hover { background: rgba(99, 102, 241, 0.15); }
+    .icon-err { color: var(--red); font-weight: 700; }
+    .icon-warn { color: var(--amber); font-weight: 700; }
+    .elem-id { font-family: var(--mono); color: var(--cyan); }
+
+    /* Footer Status bar */
+    .statusbar {
+      background: #111317; border-top: 1px solid var(--border); padding: 6px 12px;
+      font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-badge">⚡</div>
+      <div class="title">
+        <h3>RuleCheck WebView2</h3>
+        <p>Live Revit 2027 Bridge</p>
+      </div>
+    </div>
+    <div class="header-btns">
+      <button class="hdr-btn" onclick="window.location.reload()" title="Hot Reload Web View without restarting Revit">🔄 Reload</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('tab-ingest')">1. Ingest BEP</button>
+    <button class="tab" onclick="switchTab('tab-review')">2. Review</button>
+    <button class="tab" onclick="switchTab('tab-issues')">3. Issues (<span id="issuesCount">2</span>)</button>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- TAB 1: INGEST -->
+    <div id="tab-ingest" class="tab-pane active">
+      <div class="section-title">Ingest BEP Requirements</div>
+      <div class="section-desc">Paste contract text. AI validates parameter names against live model schema.</div>
+
+      <div class="chips">
+        <button class="chip active" onclick="setPreset('doors')">Doors &amp; Fire Rating</button>
+        <button class="chip" onclick="setPreset('unres')">Missing Parameter</button>
+        <button class="chip" onclick="setPreset('inex')">Subjective Clause</button>
+      </div>
+
+      <textarea id="bepTextInput" rows="4">All Fire Doors located on Level 1 and above must have a non-empty FireRating parameter specified. In addition, all door marks must strictly comply with pattern DR-[0-9]{3}.</textarea>
+
+      <div class="info-card">
+        🛡️ <strong>WebView2 Safety:</strong> UI runs in an isolated Chromium process. Edits update live with zero Revit restarts!
+      </div>
+
+      <button class="btn btn-primary" onclick="translateRules()">
+        <span>✨ Parse &amp; Ground Rules</span>
+      </button>
+    </div>
+
+    <!-- TAB 2: REVIEW -->
+    <div id="tab-review" class="tab-pane">
+      <div class="section-title">Candidate Rules Review</div>
+      <div class="section-desc">Verify generated rules with verbatim quotes before running:</div>
+
+      <div class="rules-list" id="rulesContainer">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span class="rule-title">Fire Doors — FireRating Completeness</span>
+            <span class="badge badge-ok">Grounded OK</span>
+          </div>
+          <div class="quote-box">"All Fire Doors located on Level 1 and above must have a non-empty FireRating parameter specified."</div>
+          <div style="font-size:10px; color:var(--text-muted);">Target: OST_Doors | Check: required_parameter (FireRating)</div>
+        </div>
+
+        <div class="rule-card warning-left">
+          <div class="rule-header">
+            <span class="rule-title">Door Mark Pattern</span>
+            <span class="badge badge-ok">Grounded OK</span>
+          </div>
+          <div class="quote-box">"all door marks must strictly comply with pattern DR-[0-9]{3}."</div>
+          <div style="font-size:10px; color:var(--text-muted);">Target: OST_Doors | Check: pattern (^DR-[0-9]{3}$)</div>
+        </div>
+      </div>
+
+      <button class="btn btn-success" onclick="runValidation()">
+        <span>▶ Run Rules Against Active Revit Model</span>
+      </button>
+    </div>
+
+    <!-- TAB 3: ISSUES -->
+    <div id="tab-issues" class="tab-pane">
+      <div class="section-title">Audit Findings</div>
+      <div class="section-desc">Click any row to trigger native <strong>UIDocument.ShowElements</strong> in Revit.</div>
+
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th width="20">S</th>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody id="issuesTableBody">
+            <tr class="issue-row" onclick="focusElement(482910)">
+              <td><span class="icon-err">✕</span></td>
+              <td class="elem-id">#482910</td>
+              <td>Doors</td>
+              <td>Parameter 'FireRating' is empty</td>
+            </tr>
+            <tr class="issue-row" onclick="focusElement(482915)">
+              <td><span class="icon-warn">!</span></td>
+              <td class="elem-id">#482915</td>
+              <td>Doors</td>
+              <td>'D-BAD-99' does not match pattern ^DR-[0-9]{3}$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-card">
+        💡 <strong>Revit Bridge:</strong> Clicking an issue row sends a message across the bridge to C# to pan &amp; zoom in 3D.
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="statusbar">
+    <span id="statusLabel">Connected to Revit 2027 (WebView2 Bridge)</span>
+    <span id="timingLabel">0ms</span>
+  </div>
+
+  <script>
+    const PRESETS = {
+      doors: "All Fire Doors located on Level 1 and above must have a non-empty FireRating parameter specified. In addition, all door marks must strictly comply with pattern DR-[0-9]{3}.",
+      unres: "All structural columns must carry 'SpecialSeismicCategory' specified.",
+      inex: "The main building entrance should feel welcoming and spacious."
+    };
+
+    function setPreset(key) {
+      document.getElementById('bepTextInput').value = PRESETS[key];
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function translateRules() {
+      setStatus("Translating rules with Gemini...");
+      setTimeout(() => {
+        switchTab('tab-review');
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        setStatus("Generated 2 validated rules.");
+      }, 400);
+    }
+
+    // Call Revit C# Bridge to run audit on active model
+    function runValidation() {
+      setStatus("Extracting snapshot and evaluating rules in .NET 10...");
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({
+          action: "runAudit",
+          bepText: document.getElementById('bepTextInput').value
+        });
+      } else {
+        // Fallback for standalone browser testing
+        setTimeout(() => {
+          switchTab('tab-issues');
+          document.querySelectorAll('.tab')[2].classList.add('active');
+          setStatus("Evaluated 2 rules on model snapshot.");
+        }, 500);
+      }
+    }
+
+    // Call Revit C# Bridge to zoom to element
+    function focusElement(elementId) {
+      setStatus("UIDocument.ShowElements(" + elementId + ") -> Zooming Revit camera...");
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({
+          action: "showElement",
+          elementId: elementId
+        });
+      }
+    }
+
+    // Listen to messages sent from C# (Revit)
+    if (window.chrome && window.chrome.webview) {
+      window.chrome.webview.addEventListener("message", event => {
+        const data = event.data;
+        if (data.action === "auditResults") {
+          renderIssues(data.issues);
+          document.getElementById('timingLabel').textContent = (data.durationMs || 12) + "ms";
+          document.getElementById('issuesCount').textContent = data.issues.length;
+          switchTab('tab-issues');
+          document.querySelectorAll('.tab')[2].classList.add('active');
+          setStatus("Audit completed. Found " + data.issues.length + " issue(s).");
+        } else if (data.action === "statusUpdate") {
+          setStatus(data.message);
+        }
+      });
+    }
+
+    function renderIssues(issues) {
+      const tbody = document.getElementById('issuesTableBody');
+      tbody.innerHTML = '';
+      issues.forEach(iss => {
+        const tr = document.createElement('tr');
+        tr.className = 'issue-row';
+        tr.onclick = () => focusElement(iss.elementId);
+        const icon = iss.severity === 'error' ? '<span class="icon-err">✕</span>' : '<span class="icon-warn">!</span>';
+        tr.innerHTML = `
+          <td>${icon}</td>
+          <td class="elem-id">#${iss.elementId}</td>
+          <td>${iss.category}</td>
+          <td>${iss.message}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setStatus(msg) {
+      document.getElementById('statusLabel').textContent = msg;
+    }
+  </script>
+</body>
+</html>
